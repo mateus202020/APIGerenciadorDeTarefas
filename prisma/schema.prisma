@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  member
+}
+
+enum StatusTask {
+  peding
+  in_progress
+  completed
+}
+
+enum PriorityTask {
+  hight
+  medium 
+  low
+}
+
+enum Tasks_history_time {
+  old_status
+  new_status
+}
+
+model User {
+  id          String         @id @default(uuid())
+  name        String
+  email       String
+  password    String
+  role        UserRole       @default(admin)
+  created_at  DateTime       @default(now()) @map("created_at")
+  updated_at  DateTime?      @updatedAt @map("updated_at")
+
+  team_members team_members[] 
+  tasks Tasks[]
+
+  @@map("users")
+}
+
+model Team {
+  id          String         @id @default(uuid())
+  name        String 
+  description String 
+  created_at  DateTime       @default(now()) @map("created_at")
+  updated_at  DateTime?      @updatedAt @map("updated_at")
+
+  team_members team_members[] 
+  tasks Tasks[]
+
+  @@map("teams")
+}
+
+model team_members {
+  id       String @id @default(uuid())
+  userId   String @map("user_id")
+  teamsId  String @map("teams_id")
+  user_id  User @relation(fields: [userId], references: [id])
+  team_id  Team @relation(fields: [teamsId], references: [id])
+  created_at DateTime @default(now()) @map("created_at")
+
+  @@map("team_members")
+}
+
+
+model Tasks{
+  id String @id @default(uuid())
+  title String
+  description String
+  status StatusTask @default(peding)
+  priority PriorityTask @default(hight)
+  userId   String @map("user_id")
+  teamsId  String @map("teams_id")
+  assigned_to User @relation(fields: [userId], references: [id])
+  team_id Team @relation(fields: [teamsId], references: [id])
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at  DateTime?      @updatedAt @map("updated_at")
+
+  @@map("tasks")
+}
+
