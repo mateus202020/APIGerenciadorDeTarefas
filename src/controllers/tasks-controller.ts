@@ -45,8 +45,8 @@ class TasksController{
         })
 
         const bodySchema = z.object({
-            status: z.enum(['pending', 'in_progress', 'completed']),
-            priority: z.enum(['high', 'medium', 'low']),
+            status: z.enum(['peding', 'in_progress', 'completed']),
+            priority: z.enum(['hight', 'medium', 'low']),
         })
 
         const { id } = paramsSchema.parse(request.params)
